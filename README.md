@@ -17,7 +17,7 @@
 ## 快速开始
 
 ```bash
-git clone https://github.com/garryzh/garry-publish.git
+git clone https://github.com/Garry-Ken/garry-publish.git
 cd garry-publish
 npm install
 npm run dev
@@ -47,7 +47,7 @@ npm run dev
 
 支持一键部署到 Vercel：
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/garryzh/garry-publish)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/Garry-Ken/garry-publish)
 
 也可以手动构建：
 
