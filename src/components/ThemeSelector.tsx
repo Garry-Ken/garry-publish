@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { ChevronDown, Check, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { THEMES, THEME_GROUPS, type Theme } from '../lib/themes';
@@ -80,60 +81,63 @@ export default function ThemeSelector({ activeTheme, onThemeChange }: ThemeSelec
           <ChevronDown size={14} className={`transition-transform duration-300 ${isThemeOpen ? 'rotate-180' : ''}`} />
         </button>
 
-        <AnimatePresence>
-          {isThemeOpen && (
-            <>
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-40 bg-black/10 dark:bg-black/30" onClick={() => setIsThemeOpen(false)} />
-              <motion.div
-                initial={{ opacity: 0, scale: 0.96, y: 10 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.96, y: 10 }}
-                transition={{ duration: 0.25, ease: [0.25, 0.1, 0.25, 1] }}
-                className="fixed left-4 right-4 sm:absolute sm:left-0 sm:right-auto top-auto sm:top-12 w-auto sm:w-[580px] md:w-[680px] bg-white dark:bg-[#1c1c1e] rounded-2xl shadow-apple-lg border border-[#00000015] dark:border-[#ffffff15] z-50 overflow-hidden"
-                style={{ maxHeight: 'min(70vh, 600px)' }}
-              >
-                <div className="flex items-center justify-between px-5 pt-4 pb-2">
-                  <span className="text-[15px] font-semibold text-[#1d1d1f] dark:text-[#f5f5f7]">选择排版风格</span>
-                  <button onClick={() => setIsThemeOpen(false)} className="p-1 rounded-full hover:bg-[#00000008] dark:hover:bg-[#ffffff10] transition-colors">
-                    <X size={16} className="text-[#86868b]" />
-                  </button>
-                </div>
+        {createPortal(
+          <AnimatePresence>
+            {isThemeOpen && (
+              <>
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[200] bg-black/10 dark:bg-black/30" onClick={() => setIsThemeOpen(false)} />
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.96, y: 10 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.96, y: 10 }}
+                  transition={{ duration: 0.25, ease: [0.25, 0.1, 0.25, 1] }}
+                  className="fixed left-4 right-4 top-[50%] -translate-y-[50%] sm:left-[50%] sm:-translate-x-[50%] sm:top-[50%] w-auto sm:w-[580px] md:w-[680px] bg-white dark:bg-[#1c1c1e] rounded-2xl shadow-apple-lg border border-[#00000015] dark:border-[#ffffff15] z-[201] overflow-hidden"
+                  style={{ maxHeight: 'min(70vh, 600px)' }}
+                >
+                  <div className="flex items-center justify-between px-5 pt-4 pb-2">
+                    <span className="text-[15px] font-semibold text-[#1d1d1f] dark:text-[#f5f5f7]">选择排版风格</span>
+                    <button onClick={() => setIsThemeOpen(false)} className="p-1 rounded-full hover:bg-[#00000008] dark:hover:bg-[#ffffff10] transition-colors">
+                      <X size={16} className="text-[#86868b]" />
+                    </button>
+                  </div>
 
-                <div ref={scrollRef} onScroll={handleScroll} className="overflow-y-auto px-5 pb-5" style={{ maxHeight: 'min(calc(70vh - 56px), 544px)' }}>
-                  {THEME_GROUPS.map((group, groupIdx) => (
-                    <div key={group.label}>
-                      <div className={`flex items-center gap-2 ${groupIdx > 0 ? 'mt-4 pt-4 border-t border-[#00000010] dark:border-[#ffffff10]' : 'mt-1'}`}>
-                        <span className="text-[12px] font-semibold text-[#86868b] dark:text-[#a1a1a6] uppercase tracking-widest">{group.label}</span>
-                        <span className="text-[11px] text-[#b0b0b5] dark:text-[#666]">{group.themes.length} 款</span>
+                  <div ref={scrollRef} onScroll={handleScroll} className="overflow-y-auto px-5 pb-5" style={{ maxHeight: 'min(calc(70vh - 56px), 544px)' }}>
+                    {THEME_GROUPS.map((group, groupIdx) => (
+                      <div key={group.label}>
+                        <div className={`flex items-center gap-2 ${groupIdx > 0 ? 'mt-4 pt-4 border-t border-[#00000010] dark:border-[#ffffff10]' : 'mt-1'}`}>
+                          <span className="text-[12px] font-semibold text-[#86868b] dark:text-[#a1a1a6] uppercase tracking-widest">{group.label}</span>
+                          <span className="text-[11px] text-[#b0b0b5] dark:text-[#666]">{group.themes.length} 款</span>
+                        </div>
+                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mt-2">
+                          {group.themes.map(theme => (
+                            <button
+                              key={theme.id}
+                              onClick={() => { onThemeChange(theme.id); setIsThemeOpen(false); }}
+                              className={`relative flex flex-col items-start gap-1.5 p-3 rounded-xl text-left transition-all ${activeTheme === theme.id
+                                ? 'bg-[#0066cc]/8 dark:bg-[#0a84ff]/10 ring-2 ring-[#0066cc] dark:ring-[#0a84ff]'
+                                : 'bg-[#f5f5f7] dark:bg-[#2c2c2e] hover:bg-[#ebebed] dark:hover:bg-[#3a3a3c]'
+                              }`}
+                            >
+                              <div className="flex items-center justify-between w-full">
+                                <ThemeSwatch styles={theme.styles} />
+                                {activeTheme === theme.id && <Check size={14} className="text-[#0066cc] dark:text-[#0a84ff]" />}
+                              </div>
+                              <span className="text-[13px] font-semibold text-[#1d1d1f] dark:text-[#f5f5f7] leading-tight">{theme.name}</span>
+                              <span className="text-[11px] text-[#86868b] dark:text-[#a1a1a6] leading-snug line-clamp-2">{theme.description}</span>
+                            </button>
+                          ))}
+                        </div>
                       </div>
-                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mt-2">
-                        {group.themes.map(theme => (
-                          <button
-                            key={theme.id}
-                            onClick={() => { onThemeChange(theme.id); setIsThemeOpen(false); }}
-                            className={`relative flex flex-col items-start gap-1.5 p-3 rounded-xl text-left transition-all ${activeTheme === theme.id
-                              ? 'bg-[#0066cc]/8 dark:bg-[#0a84ff]/10 ring-2 ring-[#0066cc] dark:ring-[#0a84ff]'
-                              : 'bg-[#f5f5f7] dark:bg-[#2c2c2e] hover:bg-[#ebebed] dark:hover:bg-[#3a3a3c]'
-                            }`}
-                          >
-                            <div className="flex items-center justify-between w-full">
-                              <ThemeSwatch styles={theme.styles} />
-                              {activeTheme === theme.id && <Check size={14} className="text-[#0066cc] dark:text-[#0a84ff]" />}
-                            </div>
-                            <span className="text-[13px] font-semibold text-[#1d1d1f] dark:text-[#f5f5f7] leading-tight">{theme.name}</span>
-                            <span className="text-[11px] text-[#86868b] dark:text-[#a1a1a6] leading-snug line-clamp-2">{theme.description}</span>
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  ))}
-                </div>
+                    ))}
+                  </div>
 
-                <div className={`pointer-events-none absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-white dark:from-[#1c1c1e] to-transparent transition-opacity duration-200 rounded-b-2xl ${showBottomFade ? 'opacity-100' : 'opacity-0'}`} />
-              </motion.div>
-            </>
-          )}
-        </AnimatePresence>
+                  <div className={`pointer-events-none absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-white dark:from-[#1c1c1e] to-transparent transition-opacity duration-200 rounded-b-2xl ${showBottomFade ? 'opacity-100' : 'opacity-0'}`} />
+                </motion.div>
+              </>
+            )}
+          </AnimatePresence>,
+          document.body
+        )}
       </div>
 
       <div className="hidden lg:flex items-center ml-4 pl-4 border-l border-[#00000015] dark:border-[#ffffff15]">
