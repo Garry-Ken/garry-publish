@@ -3,7 +3,7 @@ import React from 'react';
 interface DeviceFrameProps {
   device: 'mobile' | 'tablet';
   children: React.ReactNode;
-  scrollRef?: React.RefObject<HTMLDivElement>;
+  scrollRef?: React.RefObject<HTMLDivElement | null>;
   onScroll?: () => void;
 }
 

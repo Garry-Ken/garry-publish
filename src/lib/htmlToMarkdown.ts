@@ -16,7 +16,7 @@ turndownService.use(gfm);
 
 turndownService.addRule('image', {
   filter: 'img',
-  replacement: (_content, node: any) => {
+  replacement: (_content: string, node: any) => {
     const alt = node.alt || '图片';
     const src = (node.getAttribute?.('src') || node.src || '').trim();
     const title = (node.title || '').replace(/"/g, '\\"');

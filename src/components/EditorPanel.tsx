@@ -5,7 +5,7 @@ import { handleSmartPaste } from '../lib/htmlToMarkdown';
 interface EditorPanelProps {
   markdownInput: string;
   onInputChange: (value: string) => void;
-  editorScrollRef: React.RefObject<HTMLTextAreaElement>;
+  editorScrollRef: React.RefObject<HTMLTextAreaElement | null>;
   onEditorScroll: () => void;
   scrollSyncEnabled: boolean;
 }

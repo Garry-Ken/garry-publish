@@ -6,8 +6,8 @@ interface PreviewPanelProps {
   deviceWidthClass: string;
   previewDevice: 'mobile' | 'tablet' | 'pc';
   previewRef: React.MutableRefObject<HTMLDivElement | null>;
-  previewOuterScrollRef: React.RefObject<HTMLDivElement>;
-  previewInnerScrollRef: React.RefObject<HTMLDivElement>;
+  previewOuterScrollRef: React.RefObject<HTMLDivElement | null>;
+  previewInnerScrollRef: React.RefObject<HTMLDivElement | null>;
   onPreviewOuterScroll: () => void;
   onPreviewInnerScroll: () => void;
   scrollSyncEnabled: boolean;
